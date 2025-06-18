@@ -5,11 +5,15 @@ on:
   push:
     branches:
       - main
+      - master
+    paths-ignore:
+      - '.github/**'
+      - '.cursor/**'
   workflow_dispatch:
 
 jobs:
   setup-template:
-    if: github.event.repository.is_template == false # chỉ chạy khi dùng template
+    if: github.event.repository.is_template == false
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
