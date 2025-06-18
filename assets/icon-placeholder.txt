@@ -1,0 +1,11 @@
+# Icons Placeholder
+
+This is a placeholder file to create the assets directory structure.
+
+You should replace this with actual icon files:
+- icon-16.png (16x16 pixels)
+- icon-32.png (32x32 pixels)
+- icon-48.png (48x48 pixels)
+- icon-128.png (128x128 pixels)
+
+You can generate these icons using an image editor or an icon generator. 

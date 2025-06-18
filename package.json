@@ -1,0 +1,27 @@
+{
+  "name": "web-ext-template",
+  "private" : true,
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build:chromium": "node merge-manifest.js _manifest.json manifest-chromium.json dist/manifest.json && webpack --config webpack.config.js",
+    "build:firefox": "node merge-manifest.js _manifest.json manifest-firefox.json dist/manifest.json && webpack --config webpack.config.js",
+    "build": "npm run build:chromium && npm run build:firefox",
+    "dev": "webpack --config webpack.config.js --watch"
+  },
+  "keywords": ["web-extension", "browser-extension", "template", "cross-browser"],
+  "author": "",
+  "license": "MIT",
+  "description": "A cross-browser web extension template",
+  "dependencies": {
+    "webextension-polyfill": "^0.12.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.27.4",
+    "@babel/preset-env": "^7.27.2",
+    "babel-loader": "^10.0.0",
+    "webpack": "^5.99.9",
+    "webpack-cli": "^6.0.1"
+  }
+}

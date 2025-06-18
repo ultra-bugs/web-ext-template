@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Web Extension</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      width: 320px;
+      padding: 16px;
+      margin: 0;
+      background-color: #f5f5f5;
+    }
+    
+    .header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 16px;
+      border-bottom: 1px solid #ccc;
+      padding-bottom: 8px;
+    }
+    
+    .header img {
+      width: 24px;
+      height: 24px;
+      margin-right: 12px;
+    }
+    
+    .header h1 {
+      font-size: 18px;
+      margin: 0;
+    }
+    
+    .content {
+      background-color: #fff;
+      border-radius: 4px;
+      padding: 12px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    
+    .section {
+      margin-bottom: 16px;
+    }
+    
+    .section h2 {
+      font-size: 16px;
+      margin-top: 0;
+      margin-bottom: 8px;
+      color: #333;
+    }
+    
+    .tab-container {
+      margin-bottom: 16px;
+    }
+    
+    .tabs {
+      display: flex;
+      border-bottom: 1px solid #ddd;
+      margin-bottom: 16px;
+    }
+    
+    .tab {
+      padding: 8px 16px;
+      cursor: pointer;
+      border-radius: 4px 4px 0 0;
+      background: #f5f5f5;
+      margin-right: 4px;
+      border: 1px solid #ddd;
+      border-bottom: none;
+    }
+    
+    .tab.active {
+      background: #fff;
+      border-bottom: 1px solid #fff;
+      margin-bottom: -1px;
+      font-weight: bold;
+    }
+    
+    .tab-content {
+      display: none;
+    }
+    
+    .tab-content.active {
+      display: block;
+    }
+    
+    #data-list {
+      list-style-type: none;
+      padding-left: 0;
+      margin-top: 8px;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+    
+    #data-list li {
+      padding: 8px;
+      border-bottom: 1px solid #eee;
+    }
+    
+    #data-list li:last-child {
+      border-bottom: none;
+    }
+    
+    #data-list .item-url {
+      display: block;
+      font-size: 12px;
+      color: #666;
+      margin-top: 4px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    
+    #data-list .item-timestamp {
+      display: block;
+      font-size: 11px;
+      color: #999;
+      margin-top: 2px;
+    }
+    
+    .empty-message {
+      color: #666;
+      font-style: italic;
+      text-align: center;
+      padding: 16px 0;
+    }
+    
+    button {
+      background-color: #4285f4;
+      color: white;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: background-color 0.2s;
+    }
+    
+    button:hover {
+      background-color: #3367d6;
+    }
+    
+    button.secondary {
+      background-color: #f1f1f1;
+      color: #333;
+      border: 1px solid #ccc;
+    }
+    
+    button.secondary:hover {
+      background-color: #e1e1e1;
+    }
+    
+    .button-group {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 12px;
+    }
+    
+    .settings-form {
+      padding: 8px 0;
+    }
+    
+    .form-group {
+      margin-bottom: 12px;
+    }
+    
+    .form-group label {
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+    }
+    
+    .toggle {
+      position: relative;
+      display: inline-block;
+      width: 40px;
+      height: 20px;
+      margin-right: 8px;
+    }
+    
+    .toggle input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #ccc;
+      transition: .4s;
+      border-radius: 20px;
+    }
+    
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 16px;
+      width: 16px;
+      left: 2px;
+      bottom: 2px;
+      background-color: white;
+      transition: .4s;
+      border-radius: 50%;
+    }
+    
+    input:checked + .slider {
+      background-color: #4285f4;
+    }
+    
+    input:checked + .slider:before {
+      transform: translateX(20px);
+    }
+    
+    .footer {
+      margin-top: 16px;
+      font-size: 12px;
+      color: #666;
+      text-align: center;
+      border-top: 1px solid #ddd;
+      padding-top: 8px;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <img src="../assets/icon-32.png" alt="Extension Logo">
+    <h1>Web Extension</h1>
+  </div>
+  
+  <div class="content">
+    <div class="tab-container">
+      <div class="tabs">
+        <div class="tab active" data-tab="data-tab">Data</div>
+        <div class="tab" data-tab="settings-tab">Settings</div>
+      </div>
+      
+      <div class="tab-content active" id="data-tab">
+        <div class="section">
+          <h2>Collected Data</h2>
+          <ul id="data-list">
+            <li class="empty-message">No data collected yet...</li>
+          </ul>
+          
+          <div class="button-group">
+            <button id="scan-button">Scan Current Page</button>
+            <button id="clear-data" class="secondary">Clear Data</button>
+          </div>
+        </div>
+      </div>
+      
+      <div class="tab-content" id="settings-tab">
+        <div class="section">
+          <h2>Extension Settings</h2>
+          <form id="settings-form" class="settings-form">
+            <div class="form-group">
+              <label>
+                <span class="toggle">
+                  <input type="checkbox" id="enabled-toggle" checked>
+                  <span class="slider"></span>
+                </span>
+                Enable extension
+              </label>
+            </div>
+            
+            <button type="submit">Save Settings</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="footer">
+    <p>Web Extension Template v1.0.0</p>
+  </div>
+  
+  <script src="../popup.js"></script>
+  <script>
+    // Simple tab switching functionality
+    document.querySelectorAll('.tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        // Hide all tab contents
+        document.querySelectorAll('.tab-content').forEach(content => {
+          content.classList.remove('active');
+        });
+        
+        // Deactivate all tabs
+        document.querySelectorAll('.tab').forEach(t => {
+          t.classList.remove('active');
+        });
+        
+        // Activate the clicked tab
+        tab.classList.add('active');
+        document.getElementById(tab.dataset.tab).classList.add('active');
+      });
+    });
+  </script>
+</body>
+</html> 
