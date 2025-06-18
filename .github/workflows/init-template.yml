@@ -1,0 +1,46 @@
+name: Init Template
+permissions: 
+  contents: write
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  setup-template:
+    if: github.event.repository.is_template == false # chỉ chạy khi dùng template
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Get Repo Name
+        run: echo "REPO_NAME=$(basename ${{ github.repository }})" >> $GITHUB_ENV
+
+      - name: Remove .cursor files
+        run: |
+          if [ -d ".cursor" ]; then
+            rm -rf .cursor
+          fi
+
+      - name: Rename README.md to README.build.md
+        run: |
+          if [ -f README.md ]; then
+            mv README.md README.build.md
+          fi
+
+      - name: Create new README.md
+        run: |
+          echo "# $REPO_NAME" > README.md
+          echo "" >> README.md
+          echo "For more infomation about installing & building. Please read [HERE](./README.build.md)" >> README.md
+
+      - name: Commit changes
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add README.md README.build.md
+          git rm -r --cached .cursor || true
+          git commit -m "Initial template"
+          git push
